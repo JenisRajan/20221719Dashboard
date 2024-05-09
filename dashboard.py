@@ -1,10 +1,10 @@
 #importing the required libraries
 
-import streamlit as st
 import pandas as pd
-import matplotlib as plt
-import plotly.express as px
+import matplotlib.pyplot as plt
 import seaborn as sns
+import plotly.express as px
+import streamlit as st
 
 # Reading CSV files
 orders_data = pd.read_csv('orders_cleaned.csv')
