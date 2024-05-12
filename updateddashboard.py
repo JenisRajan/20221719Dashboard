@@ -1,3 +1,4 @@
+# Importing the neccesary Packages
 import streamlit as st
 import pandas as pd
 import plotly.express as px
@@ -15,9 +16,9 @@ col1, col2 = st.columns((2))
 st.sidebar.title("Dashboard Filters")
 
 # Making tabs
-tab = st.sidebar.radio("Navigation", ('Order Details', 'Market Basket Analysis'))
+tab = st.sidebar.radio("Navigation", ('Order Insights', 'Market Basket Analysis'))
 
-if tab == 'Order Details':
+if tab == 'Order Insights':
     st.header("Order Details")
     st.write(orders_data)  # Display orders CSV as a table
     
@@ -30,7 +31,7 @@ if tab == 'Order Details':
     end = pd.to_datetime(st.sidebar.date_input('Pick end date', end_date))
     orders_data = orders_data[(orders_data['Order Date'] >= start) & (orders_data['Order Date'] <= end)].copy()
 
-    # Product by category and market
+    # Product by "Category and "Market"
     market = st.sidebar.selectbox('Pick your Market', orders_data['Market'].unique())
     category = st.sidebar.multiselect('Pick your category', orders_data['Category'].unique())
 
@@ -40,9 +41,9 @@ if tab == 'Order Details':
     elif market:
         filtered_data = orders_data[orders_data["Market"].isin([market])]
     elif category:
-        # Retrieving subcategories belonging to the selected category
+        # Retrieving "Subcategories" belonging to the selected category
         subcategories = orders_data[orders_data["Category"].isin(category)]["Sub-Category"].unique().tolist()
-        # Filtering based on both category and its subcategories
+        # Filtering based on both "Category" and it's "Subcategories
         filtered_data = orders_data[(orders_data["Category"].isin(category)) | (orders_data["Sub-Category"].isin(subcategories))]
     else:
         filtered_data = orders_data.copy()
@@ -54,7 +55,7 @@ if tab == 'Order Details':
     filtered_data.loc[:, "month_year"] = filtered_data["Order Date"].dt.to_period("M")
     sales_over_time = pd.DataFrame(filtered_data.groupby(filtered_data["month_year"].dt.strftime("%Y : %b"))["Sales"].sum()).reset_index()
     sales_over_time = sales_over_time.sort_values(by="month_year")
-    sales_over_time_chart = px.line(sales_over_time, x="month_year", y="Sales", labels={"Sales": "Amount"}, height=500, width=1500, template="gridon")
+    sales_over_time_chart = px.line(sales_over_time, x="Year:Month", y="Sales", labels={"Sales": "Amount"}, height=500, width=1500, template="gridon")
     st.plotly_chart(sales_over_time_chart, use_container_width=True)
 
     # Sales by Sub-Category
@@ -80,10 +81,10 @@ if tab == 'Order Details':
     segment_wise_sales.update_traces(text=orders_data['Segment'], textposition='outside')
     st.plotly_chart(segment_wise_sales, use_container_width=True)
 
-    # Scatter plot: Relationship between Sales and Profits
+    # Relationship between "Sales" and "Profits"
     st.subheader('Scatter plot: Relationship between Sales and Profits')
     scatter_plot = px.scatter(orders_data, x="Quantity", y="Profit", size='Sales')
-    scatter_plot['layout'].update(title="Relationship between Sales and Profits using Scatter Plot.",
+    scatter_plot['layout'].update(title="Sales vs. Profits",
                                   titlefont=dict(size=20), xaxis=dict(title="Sales", titlefont=dict(size=19)),
                                   yaxis=dict(title="Profit", titlefont=dict(size=19)))
     st.plotly_chart(scatter_plot, use_container_width=True)
