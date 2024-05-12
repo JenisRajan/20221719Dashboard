@@ -55,7 +55,7 @@ if tab == 'Order Insights':
     filtered_data.loc[:, "month_year"] = filtered_data["Order Date"].dt.to_period("M")
     line_chart = pd.DataFrame(filtered_data.groupby(filtered_data["month_year"].dt.strftime("%Y : %b"))["Sales"].sum()).reset_index()
     line_chart = line_chart.sort_values(by="month_year")
-    fig_sales_over_time = px.line(line_chart, x="month_year", y="Sales", labels={"Sales": "Amount"}, height=500, width=1500, template="gridon")
+    fig_sales_over_time = px.line(line_chart, x="Month:Year", y="Sales", labels={"Sales": "Amount"}, height=500, width=1500, template="gridon")
     st.plotly_chart(fig_sales_over_time, use_container_width=True)
 
     # Sales by Sub Category
@@ -85,13 +85,11 @@ if tab == 'Order Insights':
 
     with chart2:
         # Scatter plot to show the relationship between "Sales" and "Profit"
-      scatter_plot = px.scatter(orders_data, x="Quantity", y="Profit", size='Sales', symbol='Sales', symbol_size=5)
-      scatter_plot['layout'].update(title="Sales vs. Profit.",
-                              titlefont=dict(size=20), 
-                              xaxis=dict(title="Sales", titlefont=dict(size=19)),
-                              yaxis=dict(title="Profit", titlefont=dict(size=19)))
-      st.plotly_chart(scatter_plot, use_container_width=True)
-
+       scatter_plot = px.scatter(orders_data, x="Quantity", y="Profit", size='Sales')
+       scatter_plot['layout'].update(title="Sales vs Profits",
+                                 titlefont=dict(size=20), xaxis=dict(title="Sales", titlefont=dict(size=19)),
+                                 yaxis=dict(title="Profit", titlefont=dict(size=19)))
+        st.plotly_chart(scatter_plot, use_container_width=True)
 
 else:
     st.header("Market Basket Analysis Association Rules")
