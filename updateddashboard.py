@@ -89,7 +89,7 @@ if tab == 'Order Insights':
     st.plotly_chart(scatter_plot, use_container_width=True)
 
 else:
-  st.header("Market Basket Analysis Association Rules")
+  st.header("Market Basket Analysis using Association Rules")
   st.write(rules_data)
 
   st.subheader("Association Rules Heat Map - Top 15 Antecedents and Consequents")
