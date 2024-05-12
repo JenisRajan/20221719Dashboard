@@ -93,8 +93,14 @@ else:
 st.write(rules_data)
 
 st.subheader("Association Rules Heat Map")
-# Creating the heatmap based on selected axes
-pivot_data = rules_data.pivot_table(index=rules_data['antecedents'], columns=rules_data['consequents'], values='lift')
+# Filter rules_data to include only the top 15 antecedents and consequents based on support
+top_antecedents = rules_data['antecedents'].value_counts().head(15).index
+top_consequents = rules_data['consequents'].value_counts().head(15).index
+filtered_rules_data = rules_data[(rules_data['antecedents'].isin(top_antecedents)) & 
+                                 (rules_data['consequents'].isin(top_consequents))]
+
+# Creating the heatmap based on filtered data
+pivot_data = filtered_rules_data.pivot_table(index='antecedents', columns='consequents', values='lift')
 
 heatfig, ax = plt.subplots(figsize=(12, 8))  # Increase figure size
 sns.heatmap(pivot_data, ax=ax, annot=True, cmap="viridis", fmt=".2f", annot_kws={"size": 10})  # Adjust annotations and colormap
@@ -102,16 +108,15 @@ st.pyplot(heatfig)
 
 chart1, chart2 = st.columns((2))
 with chart1:
-    heat_bar_chart = px.bar(rules_data, x='support', y='antecedents', orientation='h', title='Top Antecedents based on Support')
+    heat_bar_chart = px.bar(filtered_rules_data, x='support', y='antecedents', orientation='h', title='Top Antecedents based on Support')
     st.plotly_chart(heat_bar_chart, use_container_width=True)
 with chart2:
-    heat_con_chart = px.bar(rules_data, x='support', y='consequents', orientation='h', title='Top Consequents based on Support')
+    heat_con_chart = px.bar(filtered_rules_data, x='support', y='consequents', orientation='h', title='Top Consequents based on Support')
     st.plotly_chart(heat_con_chart, use_container_width=True)
 
 # The Treemap
 st.subheader("Hierarchical view of Antecedents with their Consequents based Support")
-treemap_chart = px.treemap(rules_data, path=["antecedents", "consequents"], values="support", hover_data=["support"],
+treemap_chart = px.treemap(filtered_rules_data, path=["antecedents", "consequents"], values="support", hover_data=["support"],
                            color="consequents")
 treemap_chart.update_layout(width=900, height=700)  # Increase treemap size
 st.plotly_chart(treemap_chart, use_container_width=True)
-
