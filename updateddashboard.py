@@ -32,7 +32,7 @@ if tab == 'Order Insights':
 
     # Product by "Category" and "Market"
     market = st.sidebar.selectbox('Select your Market', orders_data['Market'].unique())
-    category = st.sidebar.multiselect('Select your category', orders_data['Category'].unique())
+    category = st.sidebar.multiselect('Select your Category', orders_data['Category'].unique())
 
     # Filtering the dashboard using the "Market" and "Product" category
     if market and category:
