@@ -51,10 +51,10 @@ if tab == 'Order Insights':
 
     # Sales Over Time
     st.subheader('Sales over time')
-    filtered_data.loc[:, "month_year"] = filtered_data["Order Date"].dt.to_period("M")
-    sales_over_time = pd.DataFrame(filtered_data.groupby(filtered_data["month_year"].dt.strftime("%Y : %b"))["Sales"].sum()).reset_index()
-    sales_over_time = sales_over_time.sort_values(by="month_year")
-    sales_over_time_chart = px.line(sales_over_time, x="month_year", y="Sales", labels={"Sales": "Amount"}, height=500, width=1500, template="gridon")
+    filtered_data.loc[:, "year_month"] = filtered_data["Order Date"].dt.to_period("M")
+    sales_over_time = pd.DataFrame(filtered_data.groupby(filtered_data["year_month"].dt.strftime("%Y : %b"))["Sales"].sum()).reset_index()
+    sales_over_time = sales_over_time.sort_values(by="year_month")
+    sales_over_time_chart = px.line(sales_over_time, x="year_month", y="Sales", labels={"Sales": "Amount"}, height=500, width=1500, template="gridon")
     st.plotly_chart(sales_over_time_chart, use_container_width=True)
 
     # Sales by Sub-Category
