@@ -51,7 +51,7 @@ if tab == 'Order Insights':
     # Charts for the "Order's Insight"
 
     # Sales Over Time
-    st.subheader('Sales over time')
+    st.subheader('Sales Over Time')
     filtered_data.loc[:, "month_year"] = filtered_data["Order Date"].dt.to_period("M")
     line_chart = pd.DataFrame(filtered_data.groupby(filtered_data["month_year"].dt.strftime("%Y : %b"))["Sales"].sum()).reset_index()
     line_chart = line_chart.sort_values(by="month_year")
@@ -77,20 +77,21 @@ if tab == 'Order Insights':
 
     chart1, chart2 = st.columns((2))
     with chart1:
-        # Segment wise sales distribution
-        st.subheader('Segment wise profit distribution')
+        # Segment Sales Distribution
+        st.subheader('Segment Profit Distribution')
         fig_segment_profit_distribution = px.pie(orders_data, values="Sales", names='Segment')
         fig_segment_profit_distribution.update_traces(text=orders_data['Segment'], textposition='outside')
         st.plotly_chart(fig_segment_profit_distribution, use_container_width=True)
 
     with chart2:
-        # Scatter plot to show relationship between profit and sales
-        scatter_plot = px.scatter(orders_data, x="Quantity", y="Profit", size='Sales')
-        scatter_plot['layout'].update(title="Relationship between Sales and Profits using Scatter Plot.",
-                                 titlefont=dict(size=20), xaxis=dict(title="Sales", titlefont=dict(size=19)),
-                                 yaxis=dict(title="Profit", titlefont=dict(size=19)))
-        st.plotly_chart(scatter_plot, use_container_width=True)
-
+        # Scatter plot to show the relationship between "Sales" and "Profit"
+      scatter_plot = px.scatter(orders_data, x="Quantity", y="Profit", size='Sales', symbol='Sales')
+      scatter_plot['layout'].update(title="Sales vs. Profit.",
+                              titlefont=dict(size=20), 
+                              xaxis=dict(title="Sales", titlefont=dict(size=19)),
+                              yaxis=dict(title="Profit", titlefont=dict(size=19)))
+      scatter_plot.update_traces(marker=dict(size=5))  # Adjust the size of the markers(data points)
+      st.plotly_chart(scatter_plot, use_container_width=True)
 
 else:
     st.header("Market Basket Analysis Association Rules")
