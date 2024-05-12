@@ -15,9 +15,9 @@ col1, col2 = st.columns((2))
 st.sidebar.title("Dashboard Filters")
 
 # Making tabs
-tab = st.sidebar.radio("Navigation", ('Order Details', 'Market Basket Analysis'))
+tab = st.sidebar.radio("Navigation", ('Order Insights', 'Market Basket Analysis'))
 
-if tab == 'Order Details':
+if tab == 'Order Insights':
     st.header("Order Details")
     st.write(orders_data)  # Display orders CSV as a table
     
@@ -26,13 +26,13 @@ if tab == 'Order Details':
     start_date = pd.to_datetime(orders_data['Order Date']).min()
     end_date = pd.to_datetime(orders_data['Order Date']).max()
 
-    start = pd.to_datetime(st.sidebar.date_input('Pick start date', start_date))
-    end = pd.to_datetime(st.sidebar.date_input('Pick end date', end_date))
+    start = pd.to_datetime(st.sidebar.date_input('Select Start Date', start_date))
+    end = pd.to_datetime(st.sidebar.date_input('Select End Date', end_date))
     orders_data = orders_data[(orders_data['Order Date'] >= start) & (orders_data['Order Date'] <= end)].copy()
 
-    # Product by category and market
-    market = st.sidebar.selectbox('Pick your Market', orders_data['Market'].unique())
-    category = st.sidebar.multiselect('Pick your category', orders_data['Category'].unique())
+    # Product by "Category" and "Market"
+    market = st.sidebar.selectbox('Select your Market', orders_data['Market'].unique())
+    category = st.sidebar.multiselect('Select your category', orders_data['Category'].unique())
 
     # Filtering the dashboard using the "Market" and "Product" category
     if market and category:
@@ -47,7 +47,7 @@ if tab == 'Order Details':
     else:
         filtered_data = orders_data.copy()
 
-    # Charts for the Orders Dataset
+    # Charts for the Order Insights
 
     # Sales Over Time
     st.subheader('Sales over time')
@@ -80,10 +80,10 @@ if tab == 'Order Details':
     segment_wise_sales.update_traces(text=orders_data['Segment'], textposition='outside')
     st.plotly_chart(segment_wise_sales, use_container_width=True)
 
-    # Scatter plot: Relationship between Sales and Profits
-    st.subheader('Scatter plot: Relationship between Sales and Profits')
+    # Relationship between Sales and Profits
+    st.subheader('Relationship between Sales and Profits')
     scatter_plot = px.scatter(orders_data, x="Quantity", y="Profit", size='Sales')
-    scatter_plot['layout'].update(title="Relationship between Sales and Profits using Scatter Plot.",
+    scatter_plot['layout'].update(title=" Sales vs. Profits using Scatter Plot.",
                                   titlefont=dict(size=20), xaxis=dict(title="Sales", titlefont=dict(size=19)),
                                   yaxis=dict(title="Profit", titlefont=dict(size=19)))
     st.plotly_chart(scatter_plot, use_container_width=True)
