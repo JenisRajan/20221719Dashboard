@@ -90,27 +90,28 @@ if tab == 'Order Insights':
 
 else:
     st.header("Market Basket Analysis Association Rules")
-    st.write(rules_data)
+st.write(rules_data)
 
-    st.subheader("Association Rules Heat Map")
-    # Creating the heatmap based on selected axes
-    pivot_data = rules_data.pivot_table(index=rules_data['antecedents'], columns=rules_data['consequents'], values='lift')
+st.subheader("Association Rules Heat Map")
+# Creating the heatmap based on selected axes
+pivot_data = rules_data.pivot_table(index=rules_data['antecedents'], columns=rules_data['consequents'], values='lift')
 
-    heatfig, ax = plt.subplots(figsize=(10, 6))
-    sns.heatmap(pivot_data, ax=ax, annot=True, cmap="viridis")
-    st.pyplot(heatfig)
+heatfig, ax = plt.subplots(figsize=(12, 8))  # Increase figure size
+sns.heatmap(pivot_data, ax=ax, annot=True, cmap="viridis", fmt=".2f", annot_kws={"size": 10})  # Adjust annotations and colormap
+st.pyplot(heatfig)
 
-    chart1, chart2 = st.columns((2))
-    with chart1:
-        antecedents_support_chart = px.bar(rules_data, x='support', y='antecedents', orientation='h', title='Top Antecedents based on Support')
-        st.plotly_chart(antecedents_support_chart, use_container_width=True)
-    with chart2:
-        consequents_support_chart = px.bar(rules_data, x='support', y='consequents', orientation='h', title='Top Consequents based on Support')
-        st.plotly_chart(consequents_support_chart, use_container_width=True)
+chart1, chart2 = st.columns((2))
+with chart1:
+    heat_bar_chart = px.bar(rules_data, x='support', y='antecedents', orientation='h', title='Top Antecedents based on Support')
+    st.plotly_chart(heat_bar_chart, use_container_width=True)
+with chart2:
+    heat_con_chart = px.bar(rules_data, x='support', y='consequents', orientation='h', title='Top Consequents based on Support')
+    st.plotly_chart(heat_con_chart, use_container_width=True)
 
-    # The Treemap
-    st.subheader("Hierarchical view of Antecedents with their Consequents based Support")
-    treemap_chart = px.treemap(rules_data, path=["antecedents", "consequents"], values="support", hover_data=["support"],
-                               color="consequents")
-    treemap_chart.update_layout(width=800, height=650)
-    st.plotly_chart(treemap_chart, use_container_width=True)
+# The Treemap
+st.subheader("Hierarchical view of Antecedents with their Consequents based Support")
+treemap_chart = px.treemap(rules_data, path=["antecedents", "consequents"], values="support", hover_data=["support"],
+                           color="consequents")
+treemap_chart.update_layout(width=900, height=700)  # Increase treemap size
+st.plotly_chart(treemap_chart, use_container_width=True)
+
