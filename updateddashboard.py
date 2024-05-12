@@ -116,8 +116,11 @@ with chart2:
     st.plotly_chart(heat_con_chart, use_container_width=True)
 
 # The Treemap
-st.subheader("Hierarchical View of Antecedents with Their Consequents and Support")
-treemap_chart = px.treemap(filtered_rules_data, path=["antecedents", "consequents"], values="support", hover_data=["support"],
+st.subheader("Hierarchical View of Antecedents with Their Consequents and Support - Top 15")
+# Filter the data for the top 15 antecedents and consequents
+top_rules_data = rules_data[(rules_data['antecedents'].isin(top_antecedents)) & 
+                            (rules_data['consequents'].isin(top_consequents))]
+treemap_chart = px.treemap(top_rules_data, path=["antecedents", "consequents"], values="support", hover_data=["support"],
                            color="consequents")
 treemap_chart.update_layout(width=900, height=700)  # Increase treemap size
 st.plotly_chart(treemap_chart, use_container_width=True)
