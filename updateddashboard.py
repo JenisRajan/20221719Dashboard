@@ -89,7 +89,7 @@ if tab == 'Order Insights':
        scatter_plot['layout'].update(title="Sales vs Profits",
                                  titlefont=dict(size=20), xaxis=dict(title="Sales", titlefont=dict(size=19)),
                                  yaxis=dict(title="Profit", titlefont=dict(size=19)))
-        st.plotly_chart(scatter_plot, use_container_width=True)
+       st.plotly_chart(scatter_plot, use_container_width=True)
 
 else:
     st.header("Market Basket Analysis Association Rules")
