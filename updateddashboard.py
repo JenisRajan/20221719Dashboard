@@ -1,39 +1,37 @@
-# Importing the necessary packages
 import streamlit as st
 import pandas as pd
 import plotly.express as px
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-# Reading the requiresd CSV files
+# Reading CSV files
 orders_data = pd.read_csv('orders_cleaned.csv')
 rules_data = pd.read_csv('association_rules_results.csv')
 
-#Setting the title and layout for the dashboard in streamlit
 st.set_page_config(layout='wide')
 st.title(':department_store: Minger Electronics Insights Dashboard')
 col1, col2 = st.columns((2))
-# Adding the  dashboard filter
+# Adding dashboard filter
 st.sidebar.title("Dashboard Filters")
-# Making seperate tabs for the insights
-tab = st.sidebar.radio("Navigation", ('Order Insights', 'Market Basket Insights'))
 
-if tab == 'Order Insights':
+# Making tabs
+tab = st.sidebar.radio("Navigation", ('Order Details', 'Market Basket Analysis'))
+
+if tab == 'Order Details':
     st.header("Order Details")
     
-    # Picking the starting and ending date 
+    # Picking the date 
     orders_data['Order Date'] = pd.to_datetime(orders_data['Order Date'])
     start_date = pd.to_datetime(orders_data['Order Date']).min()
     end_date = pd.to_datetime(orders_data['Order Date']).max()
-    
-    #Adding them to the layout
-    start = pd.to_datetime(st.sidebar.date_input('Select Start Date', start_date))
-    end = pd.to_datetime(st.sidebar.date_input('Select End Date', end_date))
+
+    start = pd.to_datetime(st.sidebar.date_input('Pick start date', start_date))
+    end = pd.to_datetime(st.sidebar.date_input('Pick end date', end_date))
     orders_data = orders_data[(orders_data['Order Date'] >= start) & (orders_data['Order Date'] <= end)].copy()
 
-    # Product by "Category" and "Market"
-    market = st.sidebar.selectbox('Choose Your Market', orders_data['Market'].unique())
-    category = st.sidebar.multiselect('Choose your Category', orders_data['Category'].unique())
+    # Product by category and market
+    market = st.sidebar.selectbox('Pick your Market', orders_data['Market'].unique())
+    category = st.sidebar.multiselect('Pick your category', orders_data['Category'].unique())
 
     # Filtering the dashboard using the "Market" and "Product" category
     if market and category:
@@ -48,14 +46,14 @@ if tab == 'Order Insights':
     else:
         filtered_data = orders_data.copy()
 
-    # Charts for the "Order's Insight"
+    # Charts for the Orders Dataset
 
     # Sales Over Time
-    st.subheader('Sales Over Time')
+    st.subheader('Sales over time')
     filtered_data.loc[:, "month_year"] = filtered_data["Order Date"].dt.to_period("M")
     line_chart = pd.DataFrame(filtered_data.groupby(filtered_data["month_year"].dt.strftime("%Y : %b"))["Sales"].sum()).reset_index()
     line_chart = line_chart.sort_values(by="month_year")
-    fig_sales_over_time = px.line(line_chart, x="Month:Year", y="Sales", labels={"Sales": "Amount"}, height=500, width=1500, template="gridon")
+    fig_sales_over_time = px.line(line_chart, x="month_year", y="Sales", labels={"Sales": "Amount"}, height=500, width=1500, template="gridon")
     st.plotly_chart(fig_sales_over_time, use_container_width=True)
 
     # Sales by Sub Category
@@ -77,19 +75,19 @@ if tab == 'Order Insights':
 
     chart1, chart2 = st.columns((2))
     with chart1:
-        # Segment Sales Distribution
-        st.subheader('Segment Profit Distribution')
+        # Segment wise sales distribution
+        st.subheader('Segment wise profit distribution')
         fig_segment_profit_distribution = px.pie(orders_data, values="Sales", names='Segment')
         fig_segment_profit_distribution.update_traces(text=orders_data['Segment'], textposition='outside')
         st.plotly_chart(fig_segment_profit_distribution, use_container_width=True)
 
     with chart2:
-        # Scatter plot to show the relationship between "Sales" and "Profit"
-       scatter_plot = px.scatter(orders_data, x="Quantity", y="Profit", size='Sales')
-       scatter_plot['layout'].update(title="Sales vs Profits",
+        # Scatter plot to show relationship between profit and sales
+        scatter_plot = px.scatter(orders_data, x="Quantity", y="Profit", size='Sales')
+        scatter_plot['layout'].update(title="Relationship between Sales and Profits using Scatter Plot.",
                                  titlefont=dict(size=20), xaxis=dict(title="Sales", titlefont=dict(size=19)),
                                  yaxis=dict(title="Profit", titlefont=dict(size=19)))
-       st.plotly_chart(scatter_plot, use_container_width=True)
+        st.plotly_chart(scatter_plot, use_container_width=True)
 
 else:
     st.header("Market Basket Analysis Association Rules")
@@ -105,15 +103,15 @@ else:
 
     chart1, chart2 = st.columns((2))
     with chart1:
-        fig6 = px.bar(rules_data, x='support', y='antecedents', orientation='h', title='Top Antecedents based on Support')
-        st.plotly_chart(fig6, use_container_width=True)
+        fig_top_antecedents = px.bar(rules_data, x='support', y='antecedents', orientation='h', title='Top Antecedents based on Support')
+        st.plotly_chart(fig_top_antecedents, use_container_width=True)
     with chart2:
-        fig7 = px.bar(rules_data, x='support', y='consequents', orientation='h', title='Top Consequents based on Support')
-        st.plotly_chart(fig7, use_container_width=True)
+        fig_top_consequents = px.bar(rules_data, x='support', y='consequents', orientation='h', title='Top Consequents based on Support')
+        st.plotly_chart(fig_top_consequents, use_container_width=True)
 
     # The Treemap
     st.subheader("Hierarchical view of Antecedents with their Consequents based Support")
-    fig10 = px.treemap(rules_data, path=["antecedents", "consequents"], values="support", hover_data=["support"],
+    fig_hierarchical_view = px.treemap(rules_data, path=["antecedents", "consequents"], values="support", hover_data=["support"],
                        color="consequents")
-    fig10.update_layout(width=800, height=650)
-    st.plotly_chart(fig10, use_container_width=True)
+    fig_hierarchical_view.update_layout(width=800, height=650)
+    st.plotly_chart(fig_hierarchical_view, use_container_width=True)
