@@ -85,13 +85,13 @@ if tab == 'Order Insights':
 
     with chart2:
         # Scatter plot to show the relationship between "Sales" and "Profit"
-      scatter_plot = px.scatter(orders_data, x="Quantity", y="Profit", size='Sales', symbol='Sales')
+      scatter_plot = px.scatter(orders_data, x="Quantity", y="Profit", size='Sales', symbol='Sales', symbol_size=5)
       scatter_plot['layout'].update(title="Sales vs. Profit.",
                               titlefont=dict(size=20), 
                               xaxis=dict(title="Sales", titlefont=dict(size=19)),
                               yaxis=dict(title="Profit", titlefont=dict(size=19)))
-      scatter_plot.update_traces(marker=dict(size=5))  # Adjust the size of the markers(data points)
       st.plotly_chart(scatter_plot, use_container_width=True)
+
 
 else:
     st.header("Market Basket Analysis Association Rules")
