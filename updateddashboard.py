@@ -75,7 +75,7 @@ if tab == 'Order Insights':
     st.plotly_chart(sales_by_ship_mode_chart, use_container_width=True)
 
     # Segment-wise Sales Distribution
-    st.subheader('Segment wise profit distribution')
+    st.subheader('Segment wise Profit Distribution')
     segment_wise_sales = px.pie(orders_data, values="Sales", names='Segment')
     segment_wise_sales.update_traces(text=orders_data['Segment'], textposition='outside')
     st.plotly_chart(segment_wise_sales, use_container_width=True)
