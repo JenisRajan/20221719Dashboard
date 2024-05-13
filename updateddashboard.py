@@ -65,7 +65,7 @@ if tab == 'Order Insights':
     st.plotly_chart(sales_by_subcat_chart, use_container_width=True)
 
     # Profit by Country
-    st.subheader('Profit by Country')
+    st.subheader('Profit by Market followed by the Countries')
     profit_by_country = filtered_data.groupby(by=['Country'], as_index=False)['Profit'].sum()
     profit_by_country_chart = px.bar(profit_by_country, x="Country", y="Profit")
     st.plotly_chart(profit_by_country_chart, use_container_width=True)
